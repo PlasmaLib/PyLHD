@@ -5,6 +5,7 @@ Created on Mar 28, 2016
 '''
 
 import numpy as np
+import collections
 
 class loadtxt(object):
     '''
@@ -14,7 +15,7 @@ class loadtxt(object):
         '''
         Constructor
         '''
-        self.comments = {}
+        self.comments = collections.OrderedDict()
         for line in open(filename, 'r'):
             # reading DimNo
             if '# DimNo '.lower() in line.lower():
@@ -24,7 +25,7 @@ class loadtxt(object):
                 self.DimName = [s.strip().replace("'", "") for s in line[line.find('=')+1:].split(',')]
             # reading DimSize
             elif '# DimSize '.lower() in line.lower():
-                self.DimSize = tuple([int(s.strip().replace("'", "")) for s in line[line.find('=')+1:].split(',')])
+                self.DimSize = [int(s.strip().replace("'", "")) for s in line[line.find('=')+1:].split(',')]
             # reading DimUnit
             elif '# DimUnit '.lower() in line.lower():
                 self.DimUnit = [s.strip().replace("'", "") for s in line[line.find('=')+1:].split(',')]
@@ -60,8 +61,8 @@ class loadtxt(object):
         tmpdata = np.loadtxt(filename, comments='#', delimiter=',')
 
         # preparing dict         
-        self.dim = {}
-        self.val = {}
+        self.dim = collections.OrderedDict()
+        self.val = collections.OrderedDict()
         for dim in self.DimName:
             self.dim[dim] = np.zeros(self.DimSize).flatten()
         for val in self.Valname:
@@ -111,7 +112,27 @@ class loadtxt(object):
     def getVal(self, index):
         return self.val[self.Valname[index]]
     
-    
+    def crop(self, index, axis=0):
+        """
+        Cropping the original data and through the rest away.
+        :param index: The cropping indices. The data[index_start] will be kept.
+        :param axis: The axis where the cropping should be applied.
+        :return : The cloned eg_data
+        """
+        # for val
+        for key,item in self.val.items():
+            if axis==0:
+                self.val[key] = item[index,:]
+            elif axis==1:
+                self.val[key] = item[:,index]
+            elif axis==2:
+                self.val[key] = item[:,:,index]
+        # for dim
+        dim_key = self.dim_keys()[axis]
+        self.dim[dim_key] = self.dim[dim_key][index]
+        # for DimSize
+        self.DimSize[axis]=len(self.dim[dim_key])
+        
 class load_cxsimg(loadtxt):
     '''
     class that manipulating lhdcxs6_img or lhdcxs7_img 
