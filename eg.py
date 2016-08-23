@@ -1,4 +1,28 @@
 '''
+A function that reads eg file for the LHD experiment.
+The typical usage is 
+
+>>> data = eg.loadtxt(filename)
+
+The dimension data is stored in self.dim (ordered dict), while the data are 
+stored self.val (ordered dict)
+
+To check the contents,
+
+>>> data.dim.keys()
+(equivalently data.dim_keys())
+
+>>> data.val.keys()
+(equivalently data.val_keys())
+
+To access the data, 
+
+>>> data.dim[key]
+
+>>> data.val[key]
+
+can be used.
+
 Created on Mar 28, 2016
 
 @author: keisukefujii

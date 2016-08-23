@@ -1,3 +1,15 @@
+'''
+A function that reads PVwave data in Python.
+The typical usage is 
+
+>>> data = readsav(filename)
+
+Return is a dict.
+
+Modified on Jan 15, 2016
+@author: keisukefujii
+'''
+
 # IDLSave - a python module to read IDL 'save' files
 # Copyright (c) 2010 Thomas P. Robitaille
 
@@ -26,10 +38,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
-'''
-Modified on Jan 15, 2016
-@author: keisukefujii
-'''
 
 from __future__ import division, print_function, absolute_import
 

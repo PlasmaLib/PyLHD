@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
+'''
+A function that downloads eg data from LHD server, which is provided by LHD
+diagnostic team.
+
+The typical usage is
+
+>>> igetfile(diagname, shotenum, subshotnum, output_name)
+
+Returns the output-filename.
+To read the data, eg.loadtxt(output_filename)
+can be used.
+'''
 
 from ftplib import FTP
 import zipfile
