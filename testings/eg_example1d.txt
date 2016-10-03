@@ -1,0 +1,24 @@
+# [Parameters]
+# Name = 'example-1d'
+# ShotNo = 6115
+# Date = '1/29 15:14'
+#
+# DimNo = 1
+# DimName = 'TIME'
+# Dimsize = 5
+# DimUnit = 's'
+#
+# ValNo = 4
+# ValName= 'a', 'b', 'c', 'd'
+# ValUnit = 's', 'm', 'V', 'V'
+#
+# [comments]
+# PHI=3.5
+# PHIunit='portNO'
+# comments = 'Be thickness = 7.5 micro m'
+# [data]
+0.01, 0.1, 1, 10, 100
+0.02, 0.2, 2, 20, 200
+0.03, 0.3, 3, 30, 300
+0.04, 0.4, 4, 40, 400
+0.05, 0.5, 5, 50, 500
