@@ -2,18 +2,16 @@
 A function that reads eg file for the LHD experiment.
 The typical usage is
 
->>> data = eg.loadtxt(filename)
+>>> data = eg.load(filename)
 
-The dimension data is stored in self.dim (ordered dict), while the data are
+The dimension axis is stored in self.dim (ordered dict), while the data are
 stored self.val (ordered dict)
 
 To check the contents,
 
 >>> data.dim.keys()
-(equivalently data.dim_keys())
 
 >>> data.val.keys()
-(equivalently data.val_keys())
 
 To access the data,
 
@@ -24,6 +22,7 @@ To access the data,
 can be used.
 
 Created on Mar 28, 2016
+Updated on Oct 3, 2016
 
 @author: keisukefujii
 '''
@@ -149,6 +148,24 @@ class EGdata(object):
         """
         # TODO
         raise NotImplementedError
+
+    def val_property(self):
+        """
+        Return ordered_dict that connects ValName and ValUnit
+        """
+        prop = collections.OrderedDict()
+        for name, unit in zip(self.ValName, self.ValUnit):
+            prop[name] = unit
+        return prop
+
+    def dim_property(self):
+        """
+        Return ordered_dict that connects DimName and DimUnit
+        """
+        prop = collections.OrderedDict()
+        for name, unit in zip(self.DimName, self.DimUnit):
+            prop[name] = unit
+        return prop
 
     def _load_parameter_comments(self, filename):
         """
