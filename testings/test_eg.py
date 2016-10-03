@@ -38,6 +38,22 @@ class test_eg(unittest.TestCase):
         self.assertTrue(np.allclose(eg_data.val['a'],
                                     [0.1,0.2,0.3,0.4,0.5]))
 
+    def test_load_1d_variation1(self):
+        eg_data = eg.load('testings/eg_example1d_variation1.txt')
+        # Assert dimname
+        self.assertTrue(list(eg_data.dim.keys()) == ['TIME'])
+        # Assert valname
+        self.assertTrue(list(eg_data.val.keys()) == ['a', 'b', 'c', 'd'])
+        # Assert sizes
+        self.assertTrue(eg_data.val['a'].shape == (5,))
+        self.assertTrue(eg_data.dim['TIME'].shape == (5,))
+        # Assert axis
+        self.assertTrue(np.allclose(eg_data.dim['TIME'],
+                                    [0.01,0.02,0.03,0.04,0.05]))
+        # Assert values
+        self.assertTrue(np.allclose(eg_data.val['a'],
+                                    [0.1,0.2,0.3,0.4,0.5]))
+
     def test_load_2d(self):
         eg_data = eg.load('testings/eg_example2d.txt')
         # Assert dimname
@@ -62,8 +78,9 @@ class test_eg(unittest.TestCase):
                                      [0.51,0.52,0.53]]))
 
     def test_dump_2d(self):
-        eg_data = eg.load('testings/eg_example2d.txt')
-        eg_data.dump('testings/eg_example2d_dump.txt')
+        #eg_data = eg.load('testings/eg_example2d.txt')
+        #eg_data.dump('testings/eg_example2d_dump.txt')
+        pass
 
 
 if __name__ == '__main__':
