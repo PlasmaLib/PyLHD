@@ -162,11 +162,11 @@ class EGdata(object):
         # load [Parameters] and [Comments] section
         f = open(filename, 'r')
         for line in f:
-            if '# [Parameters]'.lower() in line.lower():
+            if '[Parameters]'.lower() in line.lower():
                 block = 'Parameters'
-            elif '# [comments]'.lower() in line.lower():
+            elif '[comments]'.lower() in line.lower():
                 block = 'comments'
-            elif '# [data]'.lower() in line.lower():
+            elif '[data]'.lower() in line.lower():
                 break # data is read np.loadtxt
             elif not '#' in line:
                 break # Finish reading.
