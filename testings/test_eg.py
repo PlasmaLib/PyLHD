@@ -77,6 +77,18 @@ class test_eg(unittest.TestCase):
                                      [0.41,0.42,0.43],
                                      [0.51,0.52,0.53]]))
 
+    def test_prop(self):
+        # test val_property and dim_property
+        eg_data = eg.load('testings/eg_example1d.txt')
+        val_prop = eg_data.val_property()
+        for key in val_prop.keys():
+            self.assertTrue(key in ['a','b','c','d'])
+            self.assertTrue(val_prop[key] in ['s','m','V','V'])
+        dim_prop = eg_data.dim_property()
+        for key in dim_prop.keys():
+            self.assertTrue(key in ['TIME'])
+            self.assertTrue(dim_prop[key] in ['s'])
+
     def test_dump_2d(self):
         #eg_data = eg.load('testings/eg_example2d.txt')
         #eg_data.dump('testings/eg_example2d_dump.txt')

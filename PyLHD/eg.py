@@ -150,6 +150,24 @@ class EGdata(object):
         # TODO
         raise NotImplementedError
 
+    def val_property(self):
+        """
+        Return ordered_dict that connects ValName and ValUnit
+        """
+        prop = collections.OrderedDict()
+        for name, unit in zip(self.ValName, self.ValUnit):
+            prop[name] = unit
+        return prop
+
+    def dim_property(self):
+        """
+        Return ordered_dict that connects DimName and DimUnit
+        """
+        prop = collections.OrderedDict()
+        for name, unit in zip(self.DimName, self.DimUnit):
+            prop[name] = unit
+        return prop
+
     def _load_parameter_comments(self, filename):
         """
         Load [Parameters] and [comments] parts of the eg-file.
