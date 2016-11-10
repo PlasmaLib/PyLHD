@@ -89,6 +89,34 @@ class test_eg(unittest.TestCase):
             self.assertTrue(key in ['TIME'])
             self.assertTrue(dim_prop[key] in ['s'])
 
+    def test_slice(self):
+        # Make sure EGdata.__getitem__ certainly works.
+        eg_data = eg.load('testings/eg_example2d.txt')
+        eg_a_original = eg_data.val['a'].copy()
+        eg_R_original = eg_data.dim['R'].copy()
+        # crop by axis=0
+        crop = eg_data[1:3]
+        self.assertTrue(np.allclose(crop.dim['TIME'], [0.02,0.03]))
+        self.assertTrue(np.allclose(crop.dim['R'], eg_data.dim['R']))
+        self.assertTrue(np.allclose(crop.val['a'], eg_data.val['a'][1:3]))
+        # make sure eg_data is not changed
+        self.assertTrue(np.allclose(eg_R_original, eg_data.dim['R']))
+        self.assertTrue(np.allclose(eg_a_original, eg_data.val['a']))
+
+    def test_index(self):
+        # Make sure EGdata.__getitem__ certainly works.
+        eg_data = eg.load('testings/eg_example2d.txt')
+        eg_a_original = eg_data.val['a'].copy()
+        eg_R_original = eg_data.dim['R'].copy()
+        # crop by axis=0
+        crop = eg_data[[1,2]]
+        self.assertTrue(np.allclose(crop.dim['TIME'], [0.02,0.03]))
+        self.assertTrue(np.allclose(crop.dim['R'], eg_data.dim['R']))
+        self.assertTrue(np.allclose(crop.val['a'], eg_data.val['a'][1:3]))
+        # make sure eg_data is not changed
+        self.assertTrue(np.allclose(eg_R_original, eg_data.dim['R']))
+        self.assertTrue(np.allclose(eg_a_original, eg_data.val['a']))
+
     def test_dump_2d(self):
         #eg_data = eg.load('testings/eg_example2d.txt')
         #eg_data.dump('testings/eg_example2d_dump.txt')

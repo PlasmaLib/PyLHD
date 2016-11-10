@@ -49,7 +49,7 @@ def unzip(targetfile):
     zf.close()
     os.remove(targetfile)
     return flist
-    
+
 
 def icheckfile(diagname, shotno, subshot):
     targetfolderpath = 'data/'
@@ -85,23 +85,23 @@ def igetfile(diagname, shotno, subshot, outputname):
         if fn[-4:].upper() == '.ZIP':
             targetpath = fn
             targetfile = targetpath.split('/')[-1]
-            print targetpath
-            print targetfile
+            print(targetpath) # support python 3
+            print(targetfile)
             ftpGet(targetpath, targetfile)
             files = unzip(targetfile)
-            os.rename(files[0], outputname) 
+            os.rename(files[0], outputname)
     return outputname
 
 if __name__ == '__main__':
     #fpath = 'data/lhdcxs7_cvi/103000/103912/000001/lhdcxs7_ti@103912.dat.zip'
     parser = OptionParser()
-    parser.add_option("-s", "--shot", dest="shotno", 
+    parser.add_option("-s", "--shot", dest="shotno",
             help = "Shot number", metavar="SHOTNO")
-    parser.add_option("-m", "--sub", dest="subshotno", 
+    parser.add_option("-m", "--sub", dest="subshotno",
             help = "Subshot number", metavar="SUBSHOTNO")
-    parser.add_option("-d", "--diagname", dest="diagname", 
+    parser.add_option("-d", "--diagname", dest="diagname",
             help = "Diagnostic name", metavar="DIAGNAME")
-    parser.add_option("-o", "--output", dest="output", 
+    parser.add_option("-o", "--output", dest="output",
             help = "Output filename", metavar="OUTPUT")
     (options, args) = parser.parse_args()
     shotno = options.shotno
@@ -123,9 +123,6 @@ if __name__ == '__main__':
 
     ret = igetfile(diagname, sn, sub, output)
     if ret == None:
-        print 'Error: there is no data for the shot.'
+        print('Error: there is no data for the shot.')
         exit(-1)
     exit(0)
-
-    
-

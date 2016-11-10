@@ -144,10 +144,37 @@ class EGdata(object):
 
     def __getitem__(self, index):
         """
-        Return the slice of the data.
+        Return the cropped data.
+        :param index: The cropping indices. The data[index_start] will be kept.
+        :param axis: The axis where the cropping should be applied.
+        :return : The cloned eg_data
         """
-        # TODO
-        raise NotImplementedError
+        # for val
+        cropped_data = EGdata(NAME=self.NAME, ShotNo=self.ShotNo,
+                    SubShotNO=self.SubShotNO,
+                    Date=self.Date, DimName=self.DimName, DimUnit=self.DimUnit,
+                    ValName=self.ValName, ValUnit=self.ValUnit)
+        # copy the comment
+        cropped_data.parameters = self.parameters
+        cropped_data.comments = self.comments
+        # copy val
+        cropped_data.val = collections.OrderedDict()
+        for key, item in self.val.items():
+            cropped_data.val[key] = item[index]
+        # prepare dim
+        cropped_data.dim = self.dim
+        cropped_data.DimSize = self.DimSize
+        dim_key = list(self.dim.keys())
+        # 1-dim case
+        if isinstance(index, (list, slice)) or len(index.shape) == 1:
+            cropped_data.dim[dim_key[0]] = self.dim[dim_key[0]][index]
+            cropped_data.DimSize[0]=len(cropped_data.dim[dim_key[0]])
+        else:
+            # TODO
+            raise NotImplementedError
+        # for DimSize
+        return cropped_data
+
 
     def val_property(self):
         """
@@ -244,25 +271,3 @@ class EGdata(object):
         # storing and reshape vals (dict)
         for i in range(len(self.ValName)):
             self.val[self.ValName[i]] = tmpdata[:,i+len(self.DimName)].reshape(self.DimSize)
-
-
-    def _slice(self, index, axis=0):
-        """
-        Crop the original data and through away the rest.
-        :param index: The cropping indices. The data[index_start] will be kept.
-        :param axis: The axis where the cropping should be applied.
-        :return : The cloned eg_data
-        """
-        # for val
-        for key,item in self.val.items():
-            if axis==0:
-                self.val[key] = item[index,:]
-            elif axis==1:
-                self.val[key] = item[:,index]
-            elif axis==2:
-                self.val[key] = item[:,:,index]
-        # for dim
-        dim_key = self.dim_keys()[axis]
-        self.dim[dim_key] = self.dim[dim_key][index]
-        # for DimSize
-        self.DimSize[axis]=len(self.dim[dim_key])
