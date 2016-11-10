@@ -1,0 +1,8 @@
+# This file tells which setting file should be used for different discharged.
+#
+# 1st column tells the start shotnumber,
+# 2nd column tells the setting file,
+# 3rd column tells the calibration file
+# 4th column tells the wavelength file.
+#
+125519, settings_125519.txt, CalibrationFactor.txt, wavelength36.txt
