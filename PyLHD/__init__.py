@@ -1,2 +1,2 @@
 from . import eg
-from . import instruments, igetfile
+from . import instruments, igetfile, pgdb
