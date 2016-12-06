@@ -1,11 +1,15 @@
 from __future__ import print_function
 import numpy as np
 import unittest
+import xarray as xr
+import os
 from PyLHD import eg
 
 class test_eg(unittest.TestCase):
     def test_load_parameters(self):
         eg_data = eg.load('testings/eg_example2d.txt')
+        # Assert eg_data is xr.DataSet
+        self.assertTrue(isinstance(eg_data, xr.Dataset))
         # Assert parameters
         self.assertTrue(eg_data.NAME == 'example-2d')
         self.assertTrue(eg_data.ShotNo == 6115)
@@ -20,7 +24,6 @@ class test_eg(unittest.TestCase):
         self.assertTrue(eg_data.comments['PHI'] == '3.5')
         self.assertTrue(eg_data.comments['PHIunit'] == '\'portNO\'')
         self.assertTrue(eg_data.comments['comments'] == '\'Be thickness = 7.5 micro m\'')
-
 
     def test_load_1d(self):
         eg_data = eg.load('testings/eg_example1d.txt')
@@ -37,7 +40,6 @@ class test_eg(unittest.TestCase):
         # Assert values
         self.assertTrue(np.allclose(eg_data.val['a'],
                                     [0.1,0.2,0.3,0.4,0.5]))
-
     def test_load_1d_variation1(self):
         eg_data = eg.load('testings/eg_example1d_variation1.txt')
         # Assert dimname
@@ -76,7 +78,6 @@ class test_eg(unittest.TestCase):
                                      [0.31,0.32,0.33],
                                      [0.41,0.42,0.43],
                                      [0.51,0.52,0.53]]))
-
     def test_prop(self):
         # test val_property and dim_property
         eg_data = eg.load('testings/eg_example1d.txt')
@@ -88,6 +89,23 @@ class test_eg(unittest.TestCase):
         for key in dim_prop.keys():
             self.assertTrue(key in ['TIME'])
             self.assertTrue(dim_prop[key] in ['s'])
+
+    '''
+    def test_dump_1d(self):
+        """ make sure dump method certainly works """
+        filename = 'testfile'
+        # make sure there is not file
+        if os.path.exists(filename):
+            os.remove(filename)
+        # dump
+        eg_data = eg.load('testings/eg_example1d.txt')
+        eg_data.dump(filename)
+        # load again
+        eg_data2 = eg.load(filename)
+        # make sure these 2 are the same
+        self.assertTrue(eg_data==eg_data2)
+        if os.path.exists(filename):
+            os.remove(filename)
 
     def test_slice(self):
         # Make sure EGdata.__getitem__ certainly works.
@@ -121,7 +139,7 @@ class test_eg(unittest.TestCase):
         #eg_data = eg.load('testings/eg_example2d.txt')
         #eg_data.dump('testings/eg_example2d_dump.txt')
         pass
-
+    '''
 
 if __name__ == '__main__':
      unittest.main()
