@@ -1,0 +1,140 @@
+[Experiment]
+isExposureTimeInMS = false
+
+# indicate the Los number in the CMOS camera configuration
+# LosFlags: analyzed data: 1, not analyzed data: 0
+#            0  1 2   3  4  5  6   7  8  9  10  11 12  13 14  15
+LosIndices = 2, 7,8, 10,11, 4,23, 13,14, 5, 22, 16,17, 19,20, 25
+LosFlags   = 0, 1,1,  1, 1, 0, 0,  1, 1, 0,  0,  1, 1,  1, 1, 0
+
+# Z width covered by each LOS
+#            los0-1,    1-2,    2-3,   3-4,   4-7, 4-5, 5-6,   7-8,  8-11, 8-9, 9-10, 11-12, 12-13, 13-14, 14-15
+dZwidth_Los = 0.078,  0.079,  0.052, 0.052, 0.104, 0.0, 0.0, 0.104, 0.104, 0.0,  0.0, 0.104, 0.052, 0.053, 0.074
+
+[ImageLayout]
+# indicate the ratio_floor, ratio_ceil, indexfloor, indexceil, interpolating BG substraction
+# for all the LOS
+# los0
+ratioFloor_Los0 = 0.5
+ ratioCeil_Los0 = 0.5
+indexFloor_Los0 = 1
+ indexCeil_Los0 = 3
+         Z_Los0 = -0.417
+
+# los1, 2 (row7, 8)
+ratioFloor_Los1 = 0.666666666666666
+ ratioCeil_Los1 = 0.333333333333333
+indexFloor_Los1 = 6
+ indexCeil_Los1 = 7
+         Z_Los1 = -0.339
+
+ratioFloor_Los2 = 0.333333333333333
+ ratioCeil_Los2 = 0.666666666666666
+indexFloor_Los2 = 6
+ indexCeil_Los2 = 7
+         Z_Los2 = -0.260
+
+# los3, 4 (row10, 11)
+ratioFloor_Los3 = 0.666666666666666
+ ratioCeil_Los3 = 0.333333333333333
+indexFloor_Los3 = 9
+ indexCeil_Los3 = 12
+         Z_Los3 = -0.208
+
+ratioFloor_Los4 = 0.333333333333333
+ ratioCeil_Los4 = 0.666666666666666
+indexFloor_Los4 = 9
+ indexCeil_Los4 = 12
+         Z_Los4 = -0.156
+
+# los5, 6 (row4, 23)
+ratioFloor_Los5 = 0.666666666666666
+ ratioCeil_Los5 = 0.333333333333333
+indexFloor_Los5 = 3
+ indexCeil_Los5 = 6
+         Z_Los5 = -0.130
+
+ratioFloor_Los6 = 0.333333333333333
+ ratioCeil_Los6 = 0.666666666666666
+indexFloor_Los6 = 21
+ indexCeil_Los6 = 24
+         Z_Los6 = -0.130
+
+# los7, 8 (row13, 14)
+ratioFloor_Los7 = 0.666666666666666
+ ratioCeil_Los7 = 0.333333333333333
+indexFloor_Los7 = 12
+ indexCeil_Los7 = 15
+         Z_Los7 = -0.0052
+
+ratioFloor_Los8 = 0.333333333333333
+ ratioCeil_Los8 = 0.666666666666666
+indexFloor_Los8 = 12
+ indexCeil_Los8 = 15
+         Z_Los8 = 0.0026
+
+# los9, 10 (row5, 22)
+ratioFloor_Los9 = 0.333333333333333
+ ratioCeil_Los9 = 0.666666666666666
+indexFloor_Los9 = 3
+ indexCeil_Los9 = 6
+         Z_Los9 = 0.0052
+
+ratioFloor_Los10= 0.666666666666666
+ ratioCeil_Los10= 0.333333333333333
+indexFloor_Los10= 21
+ indexCeil_Los10= 24
+         Z_Los10= 0.0052
+
+# los11, 12 (row16, 17)
+ratioFloor_Los11= 0.666666666666666
+ ratioCeil_Los11= 0.333333333333333
+indexFloor_Los11= 15
+ indexCeil_Los11= 18
+         Z_Los11= 0.130
+
+ratioFloor_Los12= 0.333333333333333
+ ratioCeil_Los12= 0.666666666666666
+indexFloor_Los12= 15
+ indexCeil_Los12= 18
+         Z_Los12= 0.234
+
+# los13, 14 (row19, 20)
+ratioFloor_Los13= 0.666666666666666
+ ratioCeil_Los13= 0.333333333333333
+indexFloor_Los13= 18
+ indexCeil_Los13= 21
+         Z_Los13= 0.286
+
+ratioFloor_Los14= 0.333333333333333
+ ratioCeil_Los14= 0.666666666666666
+indexFloor_Los14= 18
+ indexCeil_Los14= 21
+         Z_Los14= 0.339
+
+# los15 (row25)
+ratioFloor_Los15= 0.5
+ ratioCeil_Los15= 0.5
+indexFloor_Los15= 24
+ indexCeil_Los15= 26
+         Z_Los15= 0.417
+
+
+[Camera]
+#	readout noise in e-
+readoutNoise = 1.2
+
+#	conversion rate [count/eflash]
+conversionRate = 2.173
+
+# read time for 1 pixel height 9.74 us/pixel, center height for CMOS (1023.5 pixel)
+readoutTime = 0.00000974
+centerHeight= 1023.5
+count_offset= 95
+
+[Spectrometer]
+#	Length of the grating parpendicular to the rulings in [mm]
+Grating_Length = 170.0
+
+#	Ruling Density in [/mm]
+Grating_RulingDensity = 4000.0

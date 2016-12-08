@@ -1,0 +1,273 @@
+[Experiment]
+isExposureTimeInMS = false
+
+# indicate the Los number in the CMOS camera configuration
+# LosFlags: analyzed data: 1, not analyzed data: 0
+#           <-------------- L port ----------------------> | <------------------ O port ---------------------------------------------> |
+#            0   1  2   3  4   5  6   7  8  9 10  11 12  13 14  15 16  17 18  19 20  21 22  23 24  25 26  27 28  29 30  31 32  33 34  35
+LosIndices =22,  9,21,  8,20,  7,18,  5,17, 4,15,  2,14,  1,50, 37,49, 36,47, 34,46, 33,44, 31,43, 30,42, 29,40, 27,39, 26,25, 12,24, 11
+LosFlags   = 0,  0, 0,  0, 0,  0, 0,  0, 0, 0, 0,  0, 0,  0, 1,  1, 1,  1, 1,  1, 1,  1, 1,  1, 1,  1, 1,  1, 1,  1, 1,  1, 1,  1, 1,  1
+
+# Z width covered by each LOS
+#                 0       1       2      3      4      5      6      7      8    9    10     11     12             0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17     18     19     20
+#            los0-1,    1-2,    2-3,   3-4,   4-7,   4-5,   5-6,   7-8,  8-11, 8-9, 9-10, 11-12, 12-13, 13-14, 14-15, 15-16, 16-17, 17-18, 18-19, 19-20, 20-21, 21-22, 22-23, 23-24, 24-25, 25-26, 26-27, 27-28, 28-29, 29-30, 30-31, 31-32, 32-33, 33-34, 34-35
+dZwidth_Los = 0.040,  0.120,  0.040, 0.120, 0.040, 0.110, 0.040, 0.120, 0.050, 0.120,0.4, 0.120, 0.040,   0.0, 0.026, 0.026, 0.026, 0.079, 0.026, 0.052, 0.026, 0.052, 0.026, 0.052, 0.052, 0.052, 0.026, 0.052, 0.026, 0.052, 0.026, 0.079, 0.026, 0.026, 0.026
+
+
+[ImageLayout]
+# indicate the ratio_floor, ratio_ceil, indexfloor, indexceil, interpolating BG substraction
+# for all the LOS
+# los0
+ratioFloor_Los0 = 0.25
+ ratioCeil_Los0 = 0.75
+indexFloor_Los0 = 19
+ indexCeil_Los0 = 23
+         Z_Los0 = 0.0
+
+# los1, 2
+ratioFloor_Los1 = 0.25
+ ratioCeil_Los1 = 0.75
+indexFloor_Los1 = 6
+ indexCeil_Los1 = 10
+         Z_Los1 = 0.0
+
+ratioFloor_Los2 = 0.5
+ ratioCeil_Los2 = 0.5
+indexFloor_Los2 = 19
+ indexCeil_Los2 = 29
+         Z_Los2 = 0.0
+
+# los3, 4
+ratioFloor_Los3 = 0.5
+ ratioCeil_Los3 = 0.5
+indexFloor_Los3 = 6
+ indexCeil_Los3 = 10
+         Z_Los3 = 0.0
+
+ratioFloor_Los4 = 0.75
+ ratioCeil_Los4 = 0.25
+indexFloor_Los4 = 9
+ indexCeil_Los4 = 12
+         Z_Los4 = 0.0
+
+# los5, 6
+ratioFloor_Los5 = 0.75
+ ratioCeil_Los5 = 0.25
+indexFloor_Los5 = 6
+ indexCeil_Los5 = 10
+         Z_Los5 = -0.130
+
+ratioFloor_Los6 = 0.333333333333333
+ ratioCeil_Los6 = 0.666666666666666
+indexFloor_Los6 = 16
+ indexCeil_Los6 = 19
+         Z_Los6 = 0.0
+
+# los7, 8
+ratioFloor_Los7 = 0.333333333333333
+ ratioCeil_Los7 = 0.666666666666666
+indexFloor_Los7 = 3
+ indexCeil_Los7 = 6
+         Z_Los7 = 0.0
+
+ratioFloor_Los8 = 0.666666666666666
+ ratioCeil_Los8 = 0.333333333333333
+indexFloor_Los8 = 16
+ indexCeil_Los8 = 19
+         Z_Los8 = 0.0
+
+# los9, 10
+ratioFloor_Los9 = 0.666666666666666
+ ratioCeil_Los9 = 0.333333333333333
+indexFloor_Los9 = 3
+ indexCeil_Los9 = 6
+         Z_Los9 = 0.0
+
+ratioFloor_Los10= 0.333333333333333
+ ratioCeil_Los10= 0.666666666666666
+indexFloor_Los10= 13
+ indexCeil_Los10= 16
+         Z_Los10= 0.0
+
+# los11, 12
+ratioFloor_Los11= 0.333333333333333
+ ratioCeil_Los11= 0.666666666666666
+indexFloor_Los11= 0
+ indexCeil_Los11= 3
+         Z_Los11= 0.130
+
+ratioFloor_Los12= 0.666666666666666
+ ratioCeil_Los12= 0.333333333333333
+indexFloor_Los12= 13
+ indexCeil_Los12= 16
+         Z_Los12= 0.0
+
+# los13, 14
+ratioFloor_Los13= 0.666666666666666
+ ratioCeil_Los13= 0.333333333333333
+indexFloor_Los13= 0
+ indexCeil_Los13= 3
+         Z_Los13= 0.286
+
+#--- O port ----
+# los14, 15
+ratioFloor_Los14= 0.333333333333333
+ ratioCeil_Los14= 0.666666666666666
+indexFloor_Los14= 48
+ indexCeil_Los14= 51
+         Z_Los14= -0.417
+
+ratioFloor_Los15= 0.333333333333333
+ ratioCeil_Los15= 0.666666666666666
+indexFloor_Los15= 35
+ indexCeil_Los15= 38
+         Z_Los15= -0.391
+
+# los16, 17
+ratioFloor_Los16= 0.333333333333333
+ ratioCeil_Los16= 0.666666666666666
+indexFloor_Los16= 48
+ indexCeil_Los16= 51
+         Z_Los16= -0.365
+
+ratioFloor_Los17= 0.333333333333333
+ ratioCeil_Los17= 0.666666666666666
+indexFloor_Los17= 35
+ indexCeil_Los17= 38
+         Z_Los17= -0.339
+
+# los18, 19
+ratioFloor_Los18= 0.333333333333333
+ ratioCeil_Los18= 0.666666666666666
+indexFloor_Los18= 45
+ indexCeil_Los18= 48
+         Z_Los18= -0.26
+
+ratioFloor_Los19= 0.333333333333333
+ ratioCeil_Los19= 0.666666666666666
+indexFloor_Los19= 32
+ indexCeil_Los19= 35
+         Z_Los19= -0.234
+
+# los20, 21
+ratioFloor_Los20= 0.333333333333333
+ ratioCeil_Los20= 0.666666666666666
+indexFloor_Los20= 45
+ indexCeil_Los20= 48
+         Z_Los20= -0.182
+
+ratioFloor_Los21= 0.333333333333333
+ ratioCeil_Los21= 0.666666666666666
+indexFloor_Los21= 32
+ indexCeil_Los21= 35
+         Z_Los21= -0.156
+
+# los22, 23
+ratioFloor_Los22= 0.333333333333333
+ ratioCeil_Los22= 0.666666666666666
+indexFloor_Los22= 41
+ indexCeil_Los22= 45
+         Z_Los22= -0.104
+
+ratioFloor_Los23= 0.333333333333333
+ ratioCeil_Los23= 0.666666666666666
+indexFloor_Los23= 28
+ indexCeil_Los23= 32
+         Z_Los23= -0.078
+
+# los24, 25
+ratioFloor_Los24= 0.5
+ ratioCeil_Los24= 0.5
+indexFloor_Los24= 41
+ indexCeil_Los24= 45
+         Z_Los24= -0.026
+
+ratioFloor_Los25= 0.5
+ ratioCeil_Los25= 0.5
+indexFloor_Los25= 28
+ indexCeil_Los25= 32
+         Z_Los25= 0.026
+
+# los26, 27
+ratioFloor_Los26= 0.75
+ ratioCeil_Los26= 0.25
+indexFloor_Los26= 41
+ indexCeil_Los26= 45
+         Z_Los26= 0.078
+
+ratioFloor_Los27= 0.75
+ ratioCeil_Los27= 0.25
+indexFloor_Los27= 28
+ indexCeil_Los27= 32
+         Z_Los27= 0.104
+
+# los28, 29
+ratioFloor_Los28= 0.333333333333333
+ ratioCeil_Los28= 0.666666666666666
+indexFloor_Los28= 38
+ indexCeil_Los28= 41
+         Z_Los28= 0.156
+
+ratioFloor_Los29= 0.2
+ ratioCeil_Los29= 0.8
+indexFloor_Los29= 23
+ indexCeil_Los29= 28
+         Z_Los29= 0.182
+
+# los30, 31
+ratioFloor_Los30= 0.666666666666666
+ ratioCeil_Los30= 0.333333333333333
+indexFloor_Los30= 38
+ indexCeil_Los30= 41
+         Z_Los30= 0.234
+
+ratioFloor_Los31= 0.4
+ ratioCeil_Los31= 0.6
+indexFloor_Los31= 23
+ indexCeil_Los31= 28
+         Z_Los31= 0.26
+
+# los32, 33
+ratioFloor_Los32= 0.6
+ ratioCeil_Los32= 0.4
+indexFloor_Los32= 23
+ indexCeil_Los32= 28
+         Z_Los32= 0.339
+
+ratioFloor_Los33= 0.333333333333333
+ ratioCeil_Los33= 0.666666666666666
+indexFloor_Los33= 10
+ indexCeil_Los33= 13
+         Z_Los33= 0.365
+
+# los34, 35
+ratioFloor_Los34= 0.8
+ ratioCeil_Los34= 0.2
+indexFloor_Los34= 23
+ indexCeil_Los34= 28
+         Z_Los34= 0.391
+
+ratioFloor_Los35= 0.666666666666666
+ ratioCeil_Los35= 0.333333333333333
+indexFloor_Los35= 10
+ indexCeil_Los35= 13
+         Z_Los35= 0.417
+
+
+[Camera]
+#	readout noise in e-
+readoutNoise = 1.2
+
+#	conversion rate [count/eflash]
+conversionRate = 2.173
+
+# read time for 1 pixel height 9.74 us/pixel, center height for CMOS (1023.5 pixel)
+readoutTime = 0.00000974
+centerHeight= 1023.5
+count_offset= 95
+
+[Spectrometer]
+Grating_Length = 170.0
+
+#	Ruling Density in [/mm]
+Grating_RulingDensity = 4000.0
