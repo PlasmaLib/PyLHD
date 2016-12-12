@@ -25,59 +25,62 @@ class test_eg(unittest.TestCase):
         self.assertTrue(eg_data.comments['PHIunit'] == '\'portNO\'')
         self.assertTrue(eg_data.comments['comments'] == '\'Be thickness = 7.5 micro m\'')
 
+    # --- deprecated test ---
     def test_load_1d(self):
         eg_data = eg.load('testings/eg_example1d.txt')
         # Assert dimname
-        self.assertTrue(list(eg_data.dim.keys()) == ['TIME'])
+        self.assertTrue(list(eg_data.coords.keys()) == ['TIME'])
         # Assert valname
-        self.assertTrue(list(eg_data.val.keys()) == ['a', 'b', 'c', 'd'])
+        self.assertTrue(list(eg_data.keys()) == ['TIME', 'a', 'b', 'c', 'd'])
         # Assert sizes
-        self.assertTrue(eg_data.val['a'].shape == (5,))
-        self.assertTrue(eg_data.dim['TIME'].shape == (5,))
+        self.assertTrue(eg_data['a'].shape == (5,))
+        self.assertTrue(eg_data['TIME'].shape == (5,))
         # Assert axis
-        self.assertTrue(np.allclose(eg_data.dim['TIME'],
+        self.assertTrue(np.allclose(eg_data['TIME'],
                                     [0.01,0.02,0.03,0.04,0.05]))
         # Assert values
-        self.assertTrue(np.allclose(eg_data.val['a'],
+        self.assertTrue(np.allclose(eg_data['a'],
                                     [0.1,0.2,0.3,0.4,0.5]))
+
     def test_load_1d_variation1(self):
         eg_data = eg.load('testings/eg_example1d_variation1.txt')
         # Assert dimname
-        self.assertTrue(list(eg_data.dim.keys()) == ['TIME'])
+        self.assertTrue(list(eg_data.coords.keys()) == ['TIME'])
         # Assert valname
-        self.assertTrue(list(eg_data.val.keys()) == ['a', 'b', 'c', 'd'])
+        self.assertTrue(list(eg_data.keys()) == ['TIME', 'a', 'b', 'c', 'd'])
         # Assert sizes
-        self.assertTrue(eg_data.val['a'].shape == (5,))
-        self.assertTrue(eg_data.dim['TIME'].shape == (5,))
+        self.assertTrue(eg_data['a'].shape == (5,))
+        self.assertTrue(eg_data['TIME'].shape == (5,))
         # Assert axis
-        self.assertTrue(np.allclose(eg_data.dim['TIME'],
+        self.assertTrue(np.allclose(eg_data['TIME'],
                                     [0.01,0.02,0.03,0.04,0.05]))
         # Assert values
-        self.assertTrue(np.allclose(eg_data.val['a'],
+        self.assertTrue(np.allclose(eg_data['a'],
                                     [0.1,0.2,0.3,0.4,0.5]))
 
-    def test_load_2d(self):
+    def test_load_2d_deprecated(self):
         eg_data = eg.load('testings/eg_example2d.txt')
         # Assert dimname
-        self.assertTrue(list(eg_data.dim.keys()) == ['TIME', 'R'])
+        self.assertTrue(list(eg_data.coords.keys()) == ['TIME', 'R'])
         # Assert valname
-        self.assertTrue(list(eg_data.val.keys()) == ['a', 'b', 'c', 'd'])
+        self.assertTrue(list(eg_data.keys()) == ['TIME', 'R', 'a', 'b', 'c', 'd'])
         # Assert sizes
-        self.assertTrue(eg_data.val['a'].shape == (5,3))
-        self.assertTrue(eg_data.dim['TIME'].shape == (5,))
-        self.assertTrue(eg_data.dim['R'].shape == (3,))
+        self.assertTrue(eg_data['a'].shape == (5,3))
+        self.assertTrue(eg_data['TIME'].shape == (5,))
+        self.assertTrue(eg_data['R'].shape == (3,))
         # Assert axis
-        self.assertTrue(np.allclose(eg_data.dim['TIME'],
+        self.assertTrue(np.allclose(eg_data['TIME'],
                                     [0.01,0.02,0.03,0.04,0.05]))
-        self.assertTrue(np.allclose(eg_data.dim['R'],
+        self.assertTrue(np.allclose(eg_data['R'],
                                     [0.1,0.2,0.3]))
         # Assert values
-        self.assertTrue(np.allclose(eg_data.val['a'],
+        self.assertTrue(np.allclose(eg_data['a'],
                                     [[0.11,0.12,0.13],
                                      [0.21,0.22,0.23],
                                      [0.31,0.32,0.33],
                                      [0.41,0.42,0.43],
                                      [0.51,0.52,0.53]]))
+
     def test_prop(self):
         # test val_property and dim_property
         eg_data = eg.load('testings/eg_example1d.txt')
@@ -141,5 +144,59 @@ class test_eg(unittest.TestCase):
         pass
     '''
 
+    # --- deprecated test ---
+    def test_load_1d_deprecated(self):
+        eg_data = eg.load('testings/eg_example1d.txt')
+        # Assert dimname
+        self.assertTrue(list(eg_data.dim.keys()) == ['TIME'])
+        # Assert valname
+        self.assertTrue(list(eg_data.val.keys()) == ['a', 'b', 'c', 'd'])
+        # Assert sizes
+        self.assertTrue(eg_data.val['a'].shape == (5,))
+        self.assertTrue(eg_data.dim['TIME'].shape == (5,))
+        # Assert axis
+        self.assertTrue(np.allclose(eg_data.dim['TIME'],
+                                    [0.01,0.02,0.03,0.04,0.05]))
+        # Assert values
+        self.assertTrue(np.allclose(eg_data.val['a'],
+                                    [0.1,0.2,0.3,0.4,0.5]))
+    def test_load_1d_variation1_deprecated(self):
+        eg_data = eg.load('testings/eg_example1d_variation1.txt')
+        # Assert dimname
+        self.assertTrue(list(eg_data.dim.keys()) == ['TIME'])
+        # Assert valname
+        self.assertTrue(list(eg_data.val.keys()) == ['a', 'b', 'c', 'd'])
+        # Assert sizes
+        self.assertTrue(eg_data.val['a'].shape == (5,))
+        self.assertTrue(eg_data.dim['TIME'].shape == (5,))
+        # Assert axis
+        self.assertTrue(np.allclose(eg_data.dim['TIME'],
+                                    [0.01,0.02,0.03,0.04,0.05]))
+        # Assert values
+        self.assertTrue(np.allclose(eg_data.val['a'],
+                                    [0.1,0.2,0.3,0.4,0.5]))
+
+    def test_load_2d_deprecated(self):
+        eg_data = eg.load('testings/eg_example2d.txt')
+        # Assert dimname
+        self.assertTrue(list(eg_data.dim.keys()) == ['TIME', 'R'])
+        # Assert valname
+        self.assertTrue(list(eg_data.val.keys()) == ['a', 'b', 'c', 'd'])
+        # Assert sizes
+        self.assertTrue(eg_data.val['a'].shape == (5,3))
+        self.assertTrue(eg_data.dim['TIME'].shape == (5,))
+        self.assertTrue(eg_data.dim['R'].shape == (3,))
+        # Assert axis
+        self.assertTrue(np.allclose(eg_data.dim['TIME'],
+                                    [0.01,0.02,0.03,0.04,0.05]))
+        self.assertTrue(np.allclose(eg_data.dim['R'],
+                                    [0.1,0.2,0.3]))
+        # Assert values
+        self.assertTrue(np.allclose(eg_data.val['a'],
+                                    [[0.11,0.12,0.13],
+                                     [0.21,0.22,0.23],
+                                     [0.31,0.32,0.33],
+                                     [0.41,0.42,0.43],
+                                     [0.51,0.52,0.53]]))
 if __name__ == '__main__':
      unittest.main()
