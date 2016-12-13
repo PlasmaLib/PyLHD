@@ -16,7 +16,7 @@ class test_eg(unittest.TestCase):
             self.assertTrue(rslt['MagneticField']==-0.9)
         except socket.timeout:
             print('timed out')
-        except URLError:
+        except urllib.error.URLError:
             print('timed out')
 
 if __name__ == '__main__':
