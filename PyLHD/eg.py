@@ -124,7 +124,8 @@ def load(filename):
     coords = collections.OrderedDict()
     for i in range(len(parameters['DimName'])):
         d = tmpdata[:,i].reshape(parameters['DimSize'])
-        coords[parameters['DimName'][i]] = np.swapaxes(d, 0, i).flatten(order='F')[:parameters['DimSize'][i]]
+        coords[parameters['DimName'][i]] = \
+            np.swapaxes(d, 0, i).flatten(order='F')[:parameters['DimSize'][i]]
 
     for i in range(len(parameters['ValName'])):
         result[parameters['ValName'][i]] = xr.DataArray(
@@ -133,22 +134,24 @@ def load(filename):
                 name = parameters['ValName'][i],
                 attrs = {'Unit': parameters['ValUnit'][i]}
                 )
+    # added attrs in coords
+    for i in range(len(parameters['DimName'])):
+        result.coords[parameters['DimName'][i]].attrs = {'Unit':parameters['DimUnit'][i]}
 
     for key, item in parameters.items():
         # remove unnecessary parameters (to avoid duplicity)
-        if key not in ['DimName', 'DimNo', 'ValName', 'ValNo', 'DimSize']:
+        if key not in ['DimName', 'DimNo', 'ValName', 'ValNo', 'DimSize', 'DimUnit', 'ValUnit']:
             result.attrs[key] = item
     result.attrs['comments'] = comments
     return result
 
-def dump(dataset, filename, fmt='%.6e'):
+def dump(dataset, filename, fmt='%.6e', NAME=None, ShotNo=None):
     """
     Save xarray.Dataset to file.
 
     parameters:
     - dataset: xarray.Dataset object.
-        To make the file compatibile to eg file, the following attributes are necessary.
-        need_keys = ['NAME', 'DimUnit', 'ValUnit', 'ShotNo']
+        To make the file compatibile to eg file, the following information is necessary, ['NAME', 'ShotNo']
         To add these attributes to xarray.Dataset, call
         >>> dataset.attrs['NAME'] = 'some_name'
     - filename: path to file
@@ -158,17 +161,32 @@ def dump(dataset, filename, fmt='%.6e'):
     """
     obj = dataset.copy(deep=True)
     # Make sure some necessary parameters are certainly stored
-    need_keys = ['NAME', 'DimUnit', 'ValUnit', 'ShotNo']
-    for need_key in need_keys:
-        if need_key not in obj.attrs.keys():
-            raise ValueError('There is no '+ need_key + ' property in ' + filename)
+    if NAME is None:
+        if 'NAME' not in obj.attrs.keys():
+            raise ValueError('There is no '+ NAME + ' property in ' + filename +\
+                        '. Please provide NAME argument')
+        else:
+            NAME = obj.attrs['NAME']
+    obj.attrs['NAME'] = NAME
+
+    if ShotNo is None:
+        if 'ShotNo' not in obj.attrs.keys():
+            raise ValueError('There is no '+ ShotNo + ' property in ' + filename +\
+                        '. Please provide NAME argument')
+        else:
+            ShotNo = obj.attrs['ShotNo']
+    obj.attrs['ShotNo'] = ShotNo
 
     # add some attributes
     obj.attrs['DimName'] = list(obj.coords.keys())
     obj.attrs['DimNo']   = len(obj.coords.keys())
+    obj.attrs['DimUnit'] = [c.attrs['Unit'] if 'Unit' in c.attrs.keys() else ''
+                                for key,c in obj.coords.items()]
     obj.attrs['DimSize'] = [len(item) for key, item in obj.coords.items()]
     obj.attrs['ValName'] = list(obj.data_vars.keys())
     obj.attrs['ValNo']   = len(obj.data_vars.keys())
+    obj.attrs['ValUnit'] = [c.attrs['Unit'] if 'Unit' in c.attrs.keys() else ''
+                                for key,c in obj.data_vars.items()]
     obj.attrs['Date']    = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
 
     # --- A simple method to convert list to string ----
@@ -188,7 +206,7 @@ def dump(dataset, filename, fmt='%.6e'):
     # prepare the header
     # main parameters
     header = "[Parameters]\n"
-    for key in ['NAME', 'ShotNo', 'Date', 'DimNo', 'DimName', 'DimSize',
+    for key in ['NAME', 'ShotNo', 'Date', 'DimNo', 'DimName', 'DimSize', 'DimUnit',
                 'ValNo', 'ValName', 'ValUnit']:
         item = obj.attrs[key]
         if isinstance(item, list):
@@ -204,10 +222,11 @@ def dump(dataset, filename, fmt='%.6e'):
 
     # comments
     header += "\n[comments]\n"
-    for key, item in obj.attrs['comments'].items():
-        if isinstance(item, list):
-            item = _list_to_strings(item)
-        header += key + " = " + str(item) +"\n"
+    if 'comments' in obj.attrs.keys():
+        for key, item in obj.attrs['comments'].items():
+            if isinstance(item, list):
+                item = _list_to_strings(item)
+            header += key + " = " + str(item) +"\n"
     # data start
     header += "\n[data]"
 
@@ -260,6 +279,17 @@ class EGdata(xr.Dataset):
     Full list of methods can be found in
     http://xarray.pydata.org/en/stable/api.html#dataarray
     """
+
+    def __getattribute__(self, key):
+        """
+        Overwrite __getattribute__ to keep the backcompatibility
+        """
+        o = object.__getattribute__(self, key)
+        # Officially supported properties
+        if key in ['NAME', 'ShotNo', 'DimUnit', 'ValUnit']:
+            return self.attrs[key]
+        return o
+
     @property
     def dim(self):
         warnings.warn('\'dim\' property is deprecated. Use \'coords\' or [] operator instead.',
@@ -278,70 +308,26 @@ class EGdata(xr.Dataset):
                                             DeprecationWarning, stacklevel=2)
         return self.attrs['comments']
 
-    def __getattribute__(self, key):
-        """
-        Overwrite __getattribute__ to keep the backcompatibility
-        """
-        o = object.__getattribute__(self, key)
-        # Officially supported properties
-        if key in ['NAME', 'ShotNo', 'DimUnit', 'ValUnit']:
-            return self.attrs[key]
-        return o
-
-
-
-
-    # ["""# """ + key + """ = """ + item + """\n""" for key, item in self.parameters.items()] +
-    # ["""# """ + key + """ = """ + item + """\n""" for key, item in self.comments.items()] +
-    '''
-    def __getitem__(self, index):
-        """
-        Return the cropped data.
-        :param index: The cropping indices. The data[index_start] will be kept.
-        :param axis: The axis where the cropping should be applied.
-        :return : The cloned eg_data
-        """
-        # for val
-        cropped_data = EGdata(NAME=self.NAME, ShotNo=self.ShotNo,
-                    SubShotNO=self.SubShotNO,
-                    Date=self.Date, DimName=self.DimName, DimUnit=self.DimUnit,
-                    ValName=self.ValName, ValUnit=self.ValUnit)
-        # copy the comment
-        cropped_data.parameters = self.parameters
-        cropped_data.comments = self.comments
-        # copy val
-        cropped_data.val = collections.OrderedDict()
-        for key, item in self.val.items():
-            cropped_data.val[key] = item[index]
-        # prepare dim
-        cropped_data.dim = self.dim
-        cropped_data.DimSize = self.DimSize
-        dim_key = list(self.dim.keys())
-        # 1-dim case
-        if isinstance(index, (list, slice)) or len(index.shape) == 1:
-            cropped_data.dim[dim_key[0]] = self.dim[dim_key[0]][index]
-            cropped_data.DimSize[0]=len(cropped_data.dim[dim_key[0]])
-        else:
-            # TODO
-            raise NotImplementedError
-        # for DimSize
-        return cropped_data
-    '''
-
     def val_property(self):
         """
+        Warning: This method is deprecated
         Return ordered_dict that connects ValName and ValUnit
         """
+        warnings.warn('\'val_property\' method is deprecated. Use print(data) instead',
+                                            DeprecationWarning, stacklevel=2)
         prop = collections.OrderedDict()
-        for name, unit in zip(self.data_vars.keys(), self.attrs['ValUnit']):
-            prop[name] = unit
+        for key, item in self.data_vars.items():
+            prop[key] = item.attrs['Unit']
         return prop
 
     def dim_property(self):
         """
+        Warning: This method is deprecated
         Return ordered_dict that connects DimName and DimUnit
         """
+        warnings.warn('\'dim_property\' method is deprecated. Use print(data) instead',
+                                            DeprecationWarning, stacklevel=2)
         prop = collections.OrderedDict()
-        for name, unit in zip(self.coords.keys(), self.attrs['DimUnit']):
-            prop[name] = unit
+        for key, item in self.coords.items():
+            prop[key] = item.attrs['Unit']
         return prop

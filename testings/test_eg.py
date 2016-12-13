@@ -13,13 +13,18 @@ class test_eg(unittest.TestCase):
         # Assert parameters
         self.assertTrue(eg_data.NAME == 'example-2d')
         self.assertTrue(eg_data.ShotNo == 6115)
-        #self.assertTrue(eg_data.DimNo == 2)
-        #self.assertTrue(eg_data.DimName == ['TIME','R'])
-        #self.assertTrue(eg_data.DimSize == [5,3])
-        self.assertTrue(eg_data.DimUnit == ['s','m'])
-        #self.assertTrue(eg_data.ValNo == 4)
-        #self.assertTrue(eg_data.ValName == ['a','b','c','d'])
-        self.assertTrue(eg_data.ValUnit == ['s','m','V','V'])
+        # Assert Dim
+        self.assertTrue(list(eg_data.coords.keys()) == ['TIME','R'])
+        self.assertTrue(len(eg_data.coords['TIME']) == 5)
+        self.assertTrue(len(eg_data.coords['R']) == 3)
+        self.assertTrue(eg_data.coords['TIME'].attrs['Unit'] == 's')
+        self.assertTrue(eg_data.coords['R'].attrs['Unit'] == 'm')
+        # Assert vals
+        self.assertTrue(list(eg_data.data_vars.keys()) == ['a','b','c','d'])
+        self.assertTrue(eg_data['a'].shape == (5,3))
+        self.assertTrue(eg_data['b'].shape == (5,3))
+        self.assertTrue(eg_data['a'].attrs['Unit'] == 's')
+        self.assertTrue(eg_data['b'].attrs['Unit'] == 'm')
         # comments
         self.assertTrue(eg_data.comments['PHI'] == '3.5')
         self.assertTrue(eg_data.comments['PHIunit'] == '\'portNO\'')
