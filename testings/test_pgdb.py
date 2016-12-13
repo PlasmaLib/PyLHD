@@ -14,7 +14,7 @@ class test_eg(unittest.TestCase):
             rslt = pgdb.load(110000, ['MagneticField'])
             # make sure it indicates true values
             self.assertTrue(rslt['MagneticField']==-0.9)
-        except socket.timeout:
+        except socket.timeout, URLError:
             print('timed out')
 
 if __name__ == '__main__':
