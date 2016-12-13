@@ -17,9 +17,7 @@ else:
     raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
 
 # module
-py_modules = ['PyLHD.__init__']
-if os.path.exists('PyLHD/igetfile.py'):
-    py_modules.append('PyLHD.igetfile')
+py_modules = ['PyLHD.__init__', 'PyLHD.igetfile', 'PyLHD.retrieve', 'PyLHD.retrieve_t']
 
 setup(name='PyLHD',
       version=verstr,
