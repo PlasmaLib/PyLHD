@@ -17,7 +17,6 @@ else:
     raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
 
 # module
-py_modules = ['PyLHD.__init__', 'PyLHD.igetfile', 'PyLHD.retrieve', 'PyLHD.retrieve_t']
 
 setup(name='PyLHD',
       version=verstr,
@@ -31,10 +30,14 @@ setup(name='PyLHD',
       ext_modules=[],
       packages=["PyLHD"],
       package_dir={'PyLHD': 'PyLHD', 'PyLHD/io': 'PyLHD/io', 'PyLHD/instruments': 'PyLHD/instruments'},
-      py_modules=['PyLHD.__init__'],
+      py_modules=['PyLHD.__init__', 'PyLHD.igetfile', 'PyLHD.retrieve', 'PyLHD.retrieve_t'],
       test_suite='testings',
       #install_requires=['numpy>=1.9', 'scipy>=0.16', 'tensorflow>=0.9', 'GPflow>=0.3.0'],
-      install_requires=['numpy>=1.10', 'scipy>=0.16', 'psycopg2>=2.6', 'xarray>=0.8'],
+      install_requires="""
+        numpy>=1.10
+        scipy>=0.16
+        psycopg2>=2.6
+        xarray>=0.8""",
       classifiers=['License :: OSI Approved :: BSD License',
                    'Natural Language :: English',
                    'Operating System :: MacOS :: MacOS X',
