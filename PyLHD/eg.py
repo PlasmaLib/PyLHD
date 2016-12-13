@@ -133,11 +133,13 @@ def load(filename):
                 name = parameters['ValName'][i],
                 attrs = {'Unit': parameters['ValUnit'][i]}
                 )
+
     for key, item in parameters.items():
-        result.attrs[key] = item
+        # remove unnecessary parameters (to avoid duplicity)
+        if key not in ['DimName', 'DimNo', 'ValName', 'ValNo', 'DimSize']:
+            result.attrs[key] = item
     result.attrs['comments'] = comments
     return result
-
 
 def dump(dataset, filename, fmt='%.6e'):
     """
@@ -156,8 +158,7 @@ def dump(dataset, filename, fmt='%.6e'):
     """
     obj = dataset.copy(deep=True)
     # Make sure some necessary parameters are certainly stored
-    need_keys = ['NAME', 'DimUnit', 'ValUnit',
-                'ShotNo', 'DimSize']
+    need_keys = ['NAME', 'DimUnit', 'ValUnit', 'ShotNo']
     for need_key in need_keys:
         if need_key not in obj.attrs.keys():
             raise ValueError('There is no '+ need_key + ' property in ' + filename)
@@ -283,8 +284,7 @@ class EGdata(xr.Dataset):
         """
         o = object.__getattribute__(self, key)
         # Officially supported properties
-        if key in ['NAME', 'ShotNo','DimNo', 'DimName', 'DimSize', 'DimUnit',
-        'ValNo', 'ValName','ValUnit']:
+        if key in ['NAME', 'ShotNo', 'DimUnit', 'ValUnit']:
             return self.attrs[key]
         return o
 
@@ -333,7 +333,7 @@ class EGdata(xr.Dataset):
         Return ordered_dict that connects ValName and ValUnit
         """
         prop = collections.OrderedDict()
-        for name, unit in zip(self.ValName, self.ValUnit):
+        for name, unit in zip(self.data_vars.keys(), self.attrs['ValUnit']):
             prop[name] = unit
         return prop
 
@@ -342,6 +342,6 @@ class EGdata(xr.Dataset):
         Return ordered_dict that connects DimName and DimUnit
         """
         prop = collections.OrderedDict()
-        for name, unit in zip(self.DimName, self.DimUnit):
+        for name, unit in zip(self.coords.keys(), self.attrs['DimUnit']):
             prop[name] = unit
         return prop
