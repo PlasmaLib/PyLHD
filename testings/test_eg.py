@@ -93,7 +93,7 @@ class test_eg(unittest.TestCase):
             self.assertTrue(key in ['TIME'])
             self.assertTrue(dim_prop[key] in ['s'])
 
-    '''
+
     def test_dump_1d(self):
         """ make sure dump method certainly works """
         filename = 'testfile'
@@ -102,7 +102,7 @@ class test_eg(unittest.TestCase):
             os.remove(filename)
         # dump
         eg_data = eg.load('testings/eg_example1d.txt')
-        eg_data.dump(filename)
+        eg.dump(eg_data, filename)
         # load again
         eg_data2 = eg.load(filename)
         # make sure these 2 are the same
@@ -110,6 +110,22 @@ class test_eg(unittest.TestCase):
         if os.path.exists(filename):
             os.remove(filename)
 
+    def test_dump_2d(self):
+        """ make sure dump method certainly works """
+        filename = 'testfile'
+        # make sure there is not file
+        if os.path.exists(filename):
+            os.remove(filename)
+        # dump
+        eg_data = eg.load('testings/eg_example2d.txt')
+        eg.dump(eg_data, filename)
+        # load again
+        eg_data2 = eg.load(filename)
+        # make sure these 2 are the same
+        self.assertTrue(eg_data==eg_data2)
+        if os.path.exists(filename):
+            os.remove(filename)
+    '''
     def test_slice(self):
         # Make sure EGdata.__getitem__ certainly works.
         eg_data = eg.load('testings/eg_example2d.txt')

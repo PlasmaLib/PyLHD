@@ -15,14 +15,16 @@ To check the contents,
 
 To access the data,
 
->>> data.dim[key]
-
->>> data.val[key]
+>>> data[key]
 
 can be used.
 
-Created on Mar 28, 2016
+Updated on Dec 12, 2016.
+xarray support. Some methods are decided to be deprecated.
+For the details, see http://xarray.pydata.org/
+
 Updated on Oct 3, 2016
+Created on Mar 28, 2016
 
 @author: keisukefujii
 '''
@@ -30,7 +32,9 @@ Updated on Oct 3, 2016
 import numpy as np
 import collections
 import warnings
+from copy import deepcopy
 from datetime import datetime
+import pandas as pd
 import xarray as xr
 
 def load(filename):
@@ -41,8 +45,6 @@ def load(filename):
 
     >>>  array = eg.load(filename)
     """
-    # xr.DataSet that will be created by this method.
-    result = EGdata()
     """
     First, we load [Parameters] and [comments] parts of the eg-file.
     Parameters are stored in xarray.DataArray.attrs as an OrderedDict.
@@ -116,46 +118,146 @@ def load(filename):
     """
     # temporary data
     tmpdata = np.loadtxt(filename, comments='#', delimiter=',')
-    # preparing coordinates
-    coords = []
+    # xr.DataSet that will be created by this method.
+    result = EGdata()
     # storing and reshape dims (dict)
+    coords = collections.OrderedDict()
     for i in range(len(parameters['DimName'])):
         d = tmpdata[:,i].reshape(parameters['DimSize'])
-        coords.append(np.swapaxes(d, 0, i).flatten(order='F')[:parameters['DimSize'][i]])
+        coords[parameters['DimName'][i]] = np.swapaxes(d, 0, i).flatten(order='F')[:parameters['DimSize'][i]]
 
     for i in range(len(parameters['ValName'])):
         result[parameters['ValName'][i]] = xr.DataArray(
                 data = tmpdata[:,i+len(parameters['DimName'])].reshape(parameters['DimSize']),
                 coords = coords,
-                dims = parameters['DimName'],
-                attrs = {'Name': parameters['ValName'][i],
-                         'Unit': parameters['ValUnit'][i]}
+                name = parameters['ValName'][i],
+                attrs = {'Unit': parameters['ValUnit'][i]}
                 )
     for key, item in parameters.items():
         result.attrs[key] = item
     result.attrs['comments'] = comments
     return result
 
+
+def dump(dataset, filename, fmt='%.6e'):
+    """
+    Save xarray.Dataset to file.
+
+    parameters:
+    - dataset: xarray.Dataset object.
+        To make the file compatibile to eg file, the following attributes are necessary.
+        need_keys = ['NAME', 'DimUnit', 'ValUnit', 'ShotNo']
+        To add these attributes to xarray.Dataset, call
+        >>> dataset.attrs['NAME'] = 'some_name'
+    - filename: path to file
+    - fmt: format of the values. Same to np.savetxt. See
+        https://docs.scipy.org/doc/numpy/reference/generated/numpy.savetxt.html
+        for the detail.
+    """
+    obj = dataset.copy(deep=True)
+    # Make sure some necessary parameters are certainly stored
+    need_keys = ['NAME', 'DimUnit', 'ValUnit',
+                'ShotNo', 'DimSize']
+    for need_key in need_keys:
+        if need_key not in obj.attrs.keys():
+            raise ValueError('There is no '+ need_key + ' property in ' + filename)
+
+    # add some attributes
+    obj.attrs['DimName'] = list(obj.coords.keys())
+    obj.attrs['DimNo']   = len(obj.coords.keys())
+    obj.attrs['DimSize'] = [len(item) for key, item in obj.coords.items()]
+    obj.attrs['ValName'] = list(obj.data_vars.keys())
+    obj.attrs['ValNo']   = len(obj.data_vars.keys())
+    obj.attrs['Date']    = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+
+    # --- A simple method to convert list to string ----
+    def _list_to_strings(slist):
+        # convert from list_of_strings to string
+        string = ""
+        # a simple method to make string from string or integer
+        def _str(s):
+            return '\''+s+'\'' if isinstance(s, str) else str(s)
+
+        for i in range(len(slist)-1):
+            string += _str(slist[i])+', '
+        string += _str(slist[-1])
+        return string
+    # ---- end of this method ---
+
+    # prepare the header
+    # main parameters
+    header = "[Parameters]\n"
+    for key in ['NAME', 'ShotNo', 'Date', 'DimNo', 'DimName', 'DimSize',
+                'ValNo', 'ValName', 'ValUnit']:
+        item = obj.attrs[key]
+        if isinstance(item, list):
+            header += key + " = " + _list_to_strings(item) +"\n"
+        else:
+            header += key + " = " + str(item) +"\n"
+        del obj.attrs[key] # remove already written entries.
+
+    # other parameters
+    for key, item in obj.attrs.items():
+        if key is not 'comments':
+            header += key + " = " + str(item) +"\n"
+
+    # comments
+    header += "\n[comments]\n"
+    for key, item in obj.attrs['comments'].items():
+        if isinstance(item, list):
+            item = _list_to_strings(item)
+        header += key + " = " + str(item) +"\n"
+    # data start
+    header += "\n[data]"
+
+    #---  prepare 2d data to write into file ---
+    data = []
+    dimsize = [len(item) for key, item in obj.coords.items()]
+    # prepare coords.
+    for i, key, item in zip(list(range(len(obj.coords.keys()))),
+                            obj.coords.keys(), obj.coords.values()):
+        # expand dims to match the data_vars shape
+        coord = item
+        for j in range(len(obj.coords.keys())):
+            if i != j:
+                coord = np.expand_dims(coord, axis=j)
+        # tile the expanded dims
+        shape = deepcopy(dimsize)
+        shape[i] = 1
+        data.append(np.tile(coord, shape).flatten(order='C'))
+    # append data_vars
+    for key, item in obj.data_vars.items():
+        data.append(item.values.flatten(order='C'))
+
+    # write to file
+    np.savetxt(filename, np.stack(data, axis=0).transpose(), header=header, delimiter=',', fmt=fmt)
+
+
 class EGdata(xr.Dataset):
     """
     Object that stores eg-data.
-    Main parameters, NAME, ShotNo, SubShotNo, DimName, DimUnit, ValName, ValUnit
-    is stored in self.NAME, self.ShotNo, ... etc.
-    The dimension and values are stored in self.dim and self.val, respectively,
-    both of which is OrderedDict.
+    This methods inherites from xr.Dataset.
 
-    To see what is stored in this object, call
+    Coordinate data is stored as OrderedDict
+    >>> eg_data.coords
 
-    >>> eg_data.dim.keys()
-    >>> eg_data.val.keys()
+    To see what coordinates is stored,
+    >>> eg_data.coords.keys()
 
-    The dims and values can be accessed by
+    To access the particular coordinate, e.g. TIME,
+    >>> eg_data.coords['TIME']
+    or simply
+    >>> eg_data['TIME']
 
-    >>> eg_data.dim[key]
-    >>> eg_data.val[key]
+    To see what values are stored,
+    >>> eg_data.keys()
+    which returns the list of names including coordinates.
 
-    Each dim is 1d-np.array with size self.DimSizes[i], while all the val is
-    (self.DimNo)d-np.array with shape self.DimSizes.
+    To access the data,
+    >>> eg_data['... a key of the value']
+
+    Full list of methods can be found in
+    http://xarray.pydata.org/en/stable/api.html#dataarray
     """
     @property
     def dim(self):
@@ -186,58 +288,7 @@ class EGdata(xr.Dataset):
             return self.attrs[key]
         return o
 
-    def dump(self, filename):
-        """
-        Save eg-file to memory.
-        """
-        # Make sure some necessary parameters are certainly stored
-        need_keys = ['NAME', 'DimName', 'DimUnit', 'ValName', 'ValUnit',
-                    'DimNo', 'ValNo', 'ShotNo', 'DimSize']
-        for need_key in need_keys:
-            if need_key not in self.attrs.keys():
-                raise ValueError('There is no '+ need_key + ' property in ' + filename)
 
-#    if 'Date' not in self.attrs.keys():
-        self.attrs['Date'] = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-
-        # --- A simple method to convert list to string ----
-        def _list_to_strings(slist):
-            # convert from list_of_strings to string
-            string = ""
-            # a simple method to make string from string or integer
-            def _str(s):
-                return '\''+s+'\'' if isinstance(s, str) else str(s)
-
-            for i in range(len(slist)-1):
-                string += _str(slist[i])+', '
-            string += _str(slist[-1])
-            return string
-        # ---- end of this method ---
-
-        # prepare the header
-        # parameters
-        header = "# [Parameters]\n"
-        for key, item in self.attrs.items():
-            if key is not 'comments':
-                if isinstance(item, list):
-                    header += "# " + key + " = " + _list_to_strings(item) +"\n"
-                else:
-                    header += "# " + key + " = " + str(item) +"\n"
-        # comments
-        comments = "# [comments]\n"
-        for key, item in self.attrs['comments'].items():
-            if isinstance(item, list):
-                item = _list_to_strings(item)
-            header += "# " + key + " = " + str(item) +"\n"
-        # data start
-        header += "# [data]"
-
-        # write the data into file
-        # TODO Needs to complete. Script to reshape axis is nescessary.
-        raise NotImplementedError()
-        np.savetxt(filename, np.ones(1), header=header,
-                    comments='', delimiter=',')
-        return filename
 
 
     # ["""# """ + key + """ = """ + item + """\n""" for key, item in self.parameters.items()] +
