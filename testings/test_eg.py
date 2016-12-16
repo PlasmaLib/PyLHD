@@ -63,7 +63,7 @@ class test_eg(unittest.TestCase):
         self.assertTrue(np.allclose(eg_data['a'],
                                     [0.1,0.2,0.3,0.4,0.5]))
 
-    def test_load_2d_deprecated(self):
+    def test_load_2d(self):
         eg_data = eg.load('testings/eg_example2d.txt')
         # Assert dimname
         self.assertTrue(list(eg_data.coords.keys()) == ['TIME', 'R'])
@@ -201,8 +201,10 @@ class test_eg(unittest.TestCase):
         eg_data = eg.load('testings/eg_example2d.txt')
         # Assert dimname
         self.assertTrue(list(eg_data.dim.keys()) == ['TIME', 'R'])
+        self.assertTrue(type(eg_data.dim['TIME']) is np.ndarray)
         # Assert valname
         self.assertTrue(list(eg_data.val.keys()) == ['a', 'b', 'c', 'd'])
+        self.assertTrue(type(eg_data.val['a']) is np.ndarray)
         # Assert sizes
         self.assertTrue(eg_data.val['a'].shape == (5,3))
         self.assertTrue(eg_data.dim['TIME'].shape == (5,))

@@ -292,15 +292,23 @@ class EGdata(xr.Dataset):
 
     @property
     def dim(self):
-        warnings.warn('\'dim\' property is deprecated. Use \'coords\' or [] operator instead.',
+        warnings.warn('\'dim\' property is deprecated. Use \'coords\' or [] operator instead.\n' +
+        'This method will return xarray.DataArray rather than np.array',
                                             DeprecationWarning, stacklevel=2)
-        return self.coords
+        rt = collections.OrderedDict()
+        for key, item in self.coords.items():
+            rt[key] = item.values
+        return rt
 
     @property
     def val(self):
-        warnings.warn('\'val\' property is deprecated. Use [] operator instead.',
+        warnings.warn('\'val\' property is deprecated. Use [] operator instead.\n'+
+        'This method will return xarray.DataArray rather than np.array',
                                             DeprecationWarning, stacklevel=2)
-        return self.data_vars
+        rt = collections.OrderedDict()
+        for key, item in self.data_vars.items():
+            rt[key] = item.values
+        return rt
 
     @property
     def comments(self):
