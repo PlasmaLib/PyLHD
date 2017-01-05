@@ -17,9 +17,6 @@ else:
     raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
 
 # module
-py_modules = ['PyLHD.__init__']
-if os.path.exists('PyLHD/igetfile.py'):
-    py_modules.append('PyLHD.igetfile')
 
 setup(name='PyLHD',
       version=verstr,
@@ -28,20 +25,24 @@ setup(name='PyLHD',
       description=("Python libraries for LHD experiment."),
       license="BSD 3-clause",
       keywords="LHD national-institute-for-fusion-science plasma-fusion machine-learning",
-      url="http://github.com/fujii-team/PyLHD",
+      url="http://github.com/PlasmaLib/PyLHD",
       include_package_data=True,
       ext_modules=[],
-      packages=["PyLHD", "PyLHD.io", "PyLHD.instruments"],
-      package_dir={'PyLHD': 'PyLHD'},
-      py_modules=['PyLHD.__init__'],
-      test_suite='testing',
+      packages=["PyLHD", 'PyLHD/io', 'PyLHD/instruments'],
+      package_dir={'PyLHD': 'PyLHD', 'PyLHD/io': 'PyLHD/io', 'PyLHD/instruments': 'PyLHD/instruments'},
+      py_modules=['PyLHD.__init__', 'PyLHD.igetfile', 'PyLHD.retrieve', 'PyLHD.retrieve_t'],
+      test_suite='testings',
       #install_requires=['numpy>=1.9', 'scipy>=0.16', 'tensorflow>=0.9', 'GPflow>=0.3.0'],
-      install_requires=['numpy>=1.9', 'scipy>=0.16', 'psycopg2>=2.6'],
+      install_requires="""
+        numpy>=1.10
+        scipy>=0.16
+        psycopg2>=2.6
+        xarray>=0.8""",
       classifiers=['License :: OSI Approved :: BSD License',
                    'Natural Language :: English',
                    'Operating System :: MacOS :: MacOS X',
                    'Operating System :: Microsoft :: Windows',
                    'Operating System :: POSIX :: Linux',
                    'Programming Language :: Python :: 2.7',
-                   'Topic :: Scientific/Engineering :: Artificial Intelligence']
+                   'Topic :: Scientific/Engineering :: Physics']
       )
