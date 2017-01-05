@@ -28,7 +28,7 @@ setup(name='PyLHD',
       url="http://github.com/fujii-team/PyLHD",
       include_package_data=True,
       ext_modules=[],
-      packages=["PyLHD"],
+      packages=["PyLHD", 'PyLHD/io', 'PyLHD/instruments'],
       package_dir={'PyLHD': 'PyLHD', 'PyLHD/io': 'PyLHD/io', 'PyLHD/instruments': 'PyLHD/instruments'},
       py_modules=['PyLHD.__init__', 'PyLHD.igetfile', 'PyLHD.retrieve', 'PyLHD.retrieve_t'],
       test_suite='testings',
@@ -44,5 +44,5 @@ setup(name='PyLHD',
                    'Operating System :: Microsoft :: Windows',
                    'Operating System :: POSIX :: Linux',
                    'Programming Language :: Python :: 2.7',
-                   'Topic :: Scientific/Engineering :: Artificial Intelligence']
+                   'Topic :: Scientific/Engineering :: Physics']
       )
