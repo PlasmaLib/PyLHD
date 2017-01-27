@@ -36,7 +36,6 @@ setup(name='PyLHD',
       install_requires="""
         numpy>=1.10
         scipy>=0.16
-        psycopg2>=2.6
         xarray>=0.8""",
       classifiers=['License :: OSI Approved :: BSD License',
                    'Natural Language :: English',
