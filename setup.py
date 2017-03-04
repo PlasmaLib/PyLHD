@@ -36,7 +36,7 @@ setup(name='PyLHD',
       install_requires="""
         numpy>=1.10
         scipy>=0.16
-        urllib3
+        future
         xarray>=0.9""",
       classifiers=['License :: OSI Approved :: BSD License',
                    'Natural Language :: English',
