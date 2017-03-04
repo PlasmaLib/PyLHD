@@ -52,7 +52,7 @@ coverage.xml
 
 # binary source files
 bin/
-    
+
 # Sphinx documentation
 docs/_build/
 
