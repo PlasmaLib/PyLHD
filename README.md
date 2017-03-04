@@ -1,5 +1,5 @@
 # PyLHD
-[ ![Codeship Status for PlasmaLib/PyLHD](https://app.codeship.com/projects/a765be20-b523-0134-c68d-5ed8b845772e/status?branch=master)](https://app.codeship.com/projects/193957)
+[ ![Codeship Status for fujii-team/PyLHD](https://app.codeship.com/projects/60a2f6f0-e2fd-0134-1b72-664f30205a5b/status?branch=master)](https://app.codeship.com/projects/205940)
 [![codecov](https://codecov.io/gh/PlasmaLib/PyLHD/branch/master/graph/badge.svg?token=dnDhzru5u7)](https://codecov.io/gh/PlasmaLib/PyLHD)
 
 
