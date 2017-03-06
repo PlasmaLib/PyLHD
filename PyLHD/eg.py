@@ -30,7 +30,7 @@ Created on Mar 28, 2016
 '''
 
 import numpy as np
-import collections
+from collections import OrderedDict
 import warnings
 from copy import deepcopy
 from datetime import datetime
@@ -49,8 +49,8 @@ def load(filename):
     First, we load [Parameters] and [comments] parts of the eg-file.
     Parameters are stored in xarray.DataArray.attrs as an OrderedDict.
     """
-    parameters = collections.OrderedDict()
-    comments = collections.OrderedDict()
+    parameters = OrderedDict()
+    comments = OrderedDict()
     # load [Parameters] and [Comments] section
     with open(filename, 'r') as f:
         for line in f:
@@ -118,32 +118,38 @@ def load(filename):
     """
     # temporary data
     tmpdata = np.loadtxt(filename, comments='#', delimiter=',')
-    # xr.DataSet that will be created by this method.
-    result = EGdata()
     # storing and reshape dims (dict)
-    coords = collections.OrderedDict()
+    coords = OrderedDict()
     for i in range(len(parameters['DimName'])):
         d = tmpdata[:,i].reshape(parameters['DimSize'])
         coords[parameters['DimName'][i]] = \
             np.swapaxes(d, 0, i).flatten(order='F')[:parameters['DimSize'][i]]
 
+    # xr.DataSet that will be created by this method.
+    result = OrderedDict()
     for i in range(len(parameters['ValName'])):
         result[parameters['ValName'][i]] = xr.DataArray(
-                data = tmpdata[:,i+len(parameters['DimName'])].reshape(parameters['DimSize']),
+                data = tmpdata[:,i+len(parameters['DimName'])]\
+                        .reshape(parameters['DimSize']),
+                dims = parameters['DimName'],
                 coords = coords,
                 name = parameters['ValName'][i],
-                attrs = {'Unit': parameters['ValUnit'][i]}
-                )
-    # added attrs in coords
-    for i in range(len(parameters['DimName'])):
-        result.coords[parameters['DimName'][i]].attrs = {'Unit':parameters['DimUnit'][i]}
+                attrs = {'Unit': parameters['ValUnit'][i]})
 
+    attrs = OrderedDict()
     for key, item in parameters.items():
         # remove unnecessary parameters (to avoid duplicity)
-        if key not in ['DimName', 'DimNo', 'ValName', 'ValNo', 'DimSize', 'DimUnit', 'ValUnit']:
-            result.attrs[key] = item
-    result.attrs['comments'] = comments
-    return result
+        if key not in ['DimName', 'DimNo', 'ValName', 'ValNo', 'DimSize',
+                       'DimUnit', 'ValUnit']:
+            attrs[key] = item
+    attrs['comments'] = comments
+
+    ds = EGdata(result, coords=coords, attrs=attrs)
+    # append attrs to coords manually
+    for i in range(len(parameters['DimName'])):
+        ds.coords[parameters['DimName'][i]].attrs['Unit'] = \
+                                                        parameters['DimUnit'][i]
+    return ds
 
 def dump(dataset, filename, fmt='%.6e', NAME=None, ShotNo=None):
     """
@@ -178,11 +184,12 @@ def dump(dataset, filename, fmt='%.6e', NAME=None, ShotNo=None):
     obj.attrs['ShotNo'] = ShotNo
 
     # add some attributes
-    obj.attrs['DimName'] = list(obj.coords.keys())
-    obj.attrs['DimNo']   = len(obj.coords.keys())
-    obj.attrs['DimUnit'] = [c.attrs['Unit'] if 'Unit' in c.attrs.keys() else ''
-                                for key,c in obj.coords.items()]
-    obj.attrs['DimSize'] = [len(item) for key, item in obj.coords.items()]
+    obj.attrs['DimName'] = list(obj.dims)
+    obj.attrs['DimNo']   = len(obj.dims)
+    obj.attrs['DimUnit'] = [obj.coords[d].attrs['Unit']
+                            if 'Unit' in obj.coords[d].attrs.keys() else ''
+                            for d in obj.dims]
+    obj.attrs['DimSize'] = [len(obj.coords[d]) for d in obj.dims]
     obj.attrs['ValName'] = list(obj.data_vars.keys())
     obj.attrs['ValNo']   = len(obj.data_vars.keys())
     obj.attrs['ValUnit'] = [c.attrs['Unit'] if 'Unit' in c.attrs.keys() else ''
@@ -232,13 +239,12 @@ def dump(dataset, filename, fmt='%.6e', NAME=None, ShotNo=None):
 
     #---  prepare 2d data to write into file ---
     data = []
-    dimsize = [len(item) for key, item in obj.coords.items()]
+    dimsize = [len(obj.coords[key]) for key in obj.dims]
     # prepare coords.
-    for i, key, item in zip(list(range(len(obj.coords.keys()))),
-                            obj.coords.keys(), obj.coords.values()):
+    for i, key in zip(list(range(len(obj.dims))), obj.dims):
         # expand dims to match the data_vars shape
-        coord = item
-        for j in range(len(obj.coords.keys())):
+        coord = obj.coords[key]
+        for j in range(len(obj.dims)):
             if i != j:
                 coord = np.expand_dims(coord, axis=j)
         # tile the expanded dims
@@ -250,7 +256,8 @@ def dump(dataset, filename, fmt='%.6e', NAME=None, ShotNo=None):
         data.append(item.values.flatten(order='C'))
 
     # write to file
-    np.savetxt(filename, np.stack(data, axis=0).transpose(), header=header, delimiter=',', fmt=fmt)
+    np.savetxt(filename, np.stack(data, axis=0).transpose(), header=header,
+               delimiter=',', fmt=fmt)
 
 
 class EGdata(xr.Dataset):
@@ -295,7 +302,7 @@ class EGdata(xr.Dataset):
         warnings.warn('\'dim\' property is deprecated. Use \'coords\' or [] operator instead.\n' +
         'This method will return xarray.DataArray rather than np.array',
                                             DeprecationWarning, stacklevel=2)
-        rt = collections.OrderedDict()
+        rt = OrderedDict()
         for key, item in self.coords.items():
             rt[key] = item.values
         return rt
@@ -305,7 +312,7 @@ class EGdata(xr.Dataset):
         warnings.warn('\'val\' property is deprecated. Use [] operator instead.\n'+
         'This method will return xarray.DataArray rather than np.array',
                                             DeprecationWarning, stacklevel=2)
-        rt = collections.OrderedDict()
+        rt = OrderedDict()
         for key, item in self.data_vars.items():
             rt[key] = item.values
         return rt
@@ -323,7 +330,7 @@ class EGdata(xr.Dataset):
         """
         warnings.warn('\'val_property\' method is deprecated. Use print(data) instead',
                                             DeprecationWarning, stacklevel=2)
-        prop = collections.OrderedDict()
+        prop = OrderedDict()
         for key, item in self.data_vars.items():
             prop[key] = item.attrs['Unit']
         return prop
@@ -335,7 +342,7 @@ class EGdata(xr.Dataset):
         """
         warnings.warn('\'dim_property\' method is deprecated. Use print(data) instead',
                                             DeprecationWarning, stacklevel=2)
-        prop = collections.OrderedDict()
+        prop = OrderedDict()
         for key, item in self.coords.items():
             prop[key] = item.attrs['Unit']
         return prop
