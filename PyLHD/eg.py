@@ -130,6 +130,7 @@ def load(filename):
     for i in range(len(parameters['ValName'])):
         result[parameters['ValName'][i]] = xr.DataArray(
                 data = tmpdata[:,i+len(parameters['DimName'])].reshape(parameters['DimSize']),
+                dims = parameters['DimName'],
                 coords = coords,
                 name = parameters['ValName'][i],
                 attrs = {'Unit': parameters['ValUnit'][i]}
